@@ -113,7 +113,7 @@ export abstract class AbstractLogic<TReturn, TValue = TReturn> {
   }
 }
 
-class BooleanOrLogic extends AbstractLogic<boolean> {
+export class BooleanOrLogic extends AbstractLogic<boolean> {
   override get defaultValue() {
     return false;
   }
@@ -123,7 +123,7 @@ class BooleanOrLogic extends AbstractLogic<boolean> {
   }
 }
 
-class ArrayMergeLogic<TElement> extends AbstractLogic<
+export class ArrayMergeLogic<TElement> extends AbstractLogic<
   TElement[],
   TElement | TElement[] | undefined
 > {
@@ -146,7 +146,7 @@ class ArrayMergeLogic<TElement> extends AbstractLogic<
   }
 }
 
-class MetadataMergeLogic<T> extends AbstractLogic<T> {
+export class MetadataMergeLogic<T> extends AbstractLogic<T> {
   override get defaultValue() {
     return this.key.defaultValue;
   }
