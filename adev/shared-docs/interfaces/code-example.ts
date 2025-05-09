@@ -24,6 +24,8 @@ export interface Snippet {
   content: string;
   /** Text in following format `start-end`. Start and end are numbers, based on them provided range of lines will be displayed in collapsed mode  */
   visibleLinesRange?: string;
+  /** The name of the example that is the source of the snippet.  */
+  example?: string;
 }
 
 export interface ExampleMetadata {
@@ -37,4 +39,6 @@ export interface ExampleMetadata {
   files: Snippet[];
   /** True when ExampleViewer should have preview */
   preview: boolean;
+  /** The name of the example that is the source of the snippet.  */
+  example?: string;
 }
