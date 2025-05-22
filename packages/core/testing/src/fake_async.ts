@@ -66,6 +66,26 @@ export function fakeAsync(fn: Function, options?: {flush?: boolean}): (...args: 
 }
 
 /**
+ * Wraps a function to be executed in a shared ProxyZone.
+ *
+ * If no shared ProxyZone exists, one is created and reused for subsequent calls.
+ * Useful for wrapping test setup (beforeEach) and test execution (it) when test
+ * runner patching isn't available or desired for setting up the ProxyZone.
+ *
+ * @param fn The function to wrap.
+ * @returns A function that executes the original function within the shared ProxyZone.
+ *
+ * @experimental
+ * @publicApi
+ */
+export function withProxyZone(fn: Function): (...args: any[]) => any {
+  if (fakeAsyncTestModule) {
+    return fakeAsyncTestModule.withProxyZone(fn);
+  }
+  throw new Error(fakeAsyncTestModuleNotLoadedErrorMessage);
+}
+
+/**
  * Simulates the asynchronous passage of time for the timers in the `fakeAsync` zone.
  *
  * The microtasks queue is drained at the very start of this function and after any timer callback

@@ -224,6 +224,9 @@ export function withModule(moduleDef: TestModuleMetadata): InjectSetupWrapper;
 // @public (undocumented)
 export function withModule(moduleDef: TestModuleMetadata, fn: Function): () => any;
 
+// @public
+export function withProxyZone(fn: Function): (...args: any[]) => any;
+
 // (No @packageDocumentation comment for this package)
 
 ```
