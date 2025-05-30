@@ -8,7 +8,6 @@
 
 import {
   Injector,
-  ApplicationRef,
   NgModule,
   NgZone,
   PlatformRef,
@@ -154,7 +153,6 @@ export class UpgradeModule {
   public $injector: any /*angular.IInjectorService*/;
   /** The Angular Injector **/
   public injector: Injector;
-  private readonly applicationRef: ApplicationRef;
 
   constructor(
     /** The root `Injector` for the upgrade application. */
@@ -169,7 +167,6 @@ export class UpgradeModule {
     private platformRef: PlatformRef,
   ) {
     this.injector = new NgAdapterInjector(injector);
-    this.applicationRef = this.injector.get(ApplicationRef);
   }
 
   /**
@@ -307,32 +304,44 @@ export class UpgradeModule {
           // We need to do this in the next tick so that we don't prevent the bootup stabilizing
           setTimeout(() => {
             const synchronize = () => {
-              this.ngZone.run(() => {
-                if ($rootScope.$$phase) {
-                  if (typeof ngDevMode === 'undefined' || ngDevMode) {
-                    console.warn(
-                      'A digest was triggered while one was already in progress. This may mean that something is triggering digests outside the Angular zone.',
-                    );
-                  }
-
-                  $rootScope.$evalAsync();
-                } else {
-                  $rootScope.$digest();
+              if ($rootScope.$$phase) {
+                if (typeof ngDevMode === 'undefined' || ngDevMode) {
+                  console.warn(
+                    'A digest was triggered while one was already in progress. This may mean that something is triggering digests outside the Angular zone.',
+                  );
                 }
-              });
+
+                return $rootScope.$evalAsync();
+              }
+
+              return $rootScope.$digest();
             };
-            const subscription =
-              // We _DO NOT_ usually want to have any code that does one thing for zoneless and another for ZoneJS.
-              // This is only here because there is not enough coverage for hybrid apps anymore so we cannot
-              // be confident that making UpgradeModule work with zoneless is a non-breaking change.
-              this.ngZone instanceof ɵNoopNgZone
-                ? // Ideally this could be afterEveryRender but `afterTick` is a closer approximation to `onMicrotaskEmpty`
-                  // and makes a difference for at least 1 use-case internally (no deeper investigation was performed).
-                  (this.applicationRef as any).afterTick.subscribe(() => synchronize())
-                : this.ngZone.onMicrotaskEmpty.subscribe(() => synchronize());
-            $rootScope.$on('$destroy', () => {
-              subscription.unsubscribe();
-            });
+            // We _DO NOT_ usually want to have any code that does one thing for zoneless and another for ZoneJS.
+            // This is only here because there is not enough coverage for hybrid apps anymore so we cannot
+            // be confident that making UpgradeModule work with zoneless is a non-breaking change.
+            if (this.ngZone instanceof ɵNoopNgZone) {
+              let syncPending = false;
+              const renderRef = afterEveryRender({
+                mixedReadWrite: () => {
+                  if (syncPending) {
+                    return;
+                  }
+                  syncPending = true;
+                  queueMicrotask(() => {
+                    synchronize();
+                    syncPending = false;
+                  });
+                },
+              });
+              $rootScope.$on('$destroy', () => {
+                renderRef.destroy();
+              });
+            } else {
+              const subscription = this.ngZone.onMicrotaskEmpty.subscribe(synchronize);
+              $rootScope.$on('$destroy', () => {
+                subscription.unsubscribe();
+              });
+            }
           }, 0);
         },
       ]);
