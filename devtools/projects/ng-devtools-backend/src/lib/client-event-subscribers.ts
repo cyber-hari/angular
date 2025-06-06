@@ -711,3 +711,4 @@ const getSignalGraphCallback = (messageBus: MessageBus<Events>) => (element: Ele
     messageBus.emit('latestSignalGraph', [{nodes, edges: graph.edges}]);
   }
 };
+
