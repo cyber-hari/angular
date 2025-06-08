@@ -51,8 +51,7 @@ Check severity can be configured as an [Angular compiler option](reference/confi
       // The category to use for any diagnostics not listed in `checks` above.
       "defaultCategory": "error"
     }
-
-}
+  }
 }
 </docs-code>
 
