@@ -32,7 +32,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-import {frameLoaded, iframe, enter} from './cypress-iframe';
+import {frameLoaded, iframe, enter} from './vendor/cypress-iframe';
 
 Cypress.Commands.add('frameLoaded', frameLoaded);
 Cypress.Commands.add('iframe', iframe);
