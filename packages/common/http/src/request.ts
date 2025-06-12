@@ -178,7 +178,7 @@ export class HttpRequest<T> {
   readonly cache!: RequestCache;
 
   /**
-   *Indicates the relative priority of the request. This may be used by the browser to decide the order in which requests are dispatched and resources fetched.
+   * Indicates the relative priority of the request. This may be used by the browser to decide the order in which requests are dispatched and resources fetched.
    */
   readonly priority!: RequestPriority;
 
