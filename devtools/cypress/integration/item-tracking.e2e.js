@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 
-require('cypress-iframe');
-
 describe('Tracking items from application to component tree', () => {
   beforeEach(() => {
     cy.visit('/');
@@ -19,7 +17,7 @@ describe('Tracking items from application to component tree', () => {
     });
 
     cy.get('.tree-wrapper')
-      .find('.tree-node:contains("app-todo[TooltipDirective]")')
+      .find('ng-tree-node:contains("app-todo[TooltipDirective]")')
       .its('length')
       .should('eq', 2);
   });
@@ -39,7 +37,7 @@ describe('Tracking items from application to component tree', () => {
         });
       });
 
-    cy.get('.tree-wrapper .tree-node:contains("app-todo[TooltipDirective]")').should(
+    cy.get('.tree-wrapper ng-tree-node:contains("app-todo[TooltipDirective]")').should(
       'have.length',
       3,
     );
